@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from '../common';
-import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util';
+import { CoreClrDebugUtil, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util';
 import { PlatformInformation } from '../shared/platform';
 import {
     DebuggerPrerequisiteWarning,
@@ -20,8 +20,8 @@ import { RemoteAttachPicker } from '../shared/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
-import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
-import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { Command } from 'vscode-languageserver-types';
+import { ActionOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -221,18 +221,12 @@ function showInstallErrorMessage(eventStream: EventStream) {
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage: ActionOption | CommandOption =
-            getCSharpDevKit() !== undefined
-                ? {
-                      title: vscode.l10n.t('Get the SDK'),
-                      command: 'csdevkit.installDotnetSdk',
-                  }
-                : {
-                      title: vscode.l10n.t('Get the SDK'),
-                      action: async () => {
-                          await vscode.env.openExternal(vscode.Uri.parse('https://dot.net/core-sdk-vscode'));
-                      },
-                  };
+        const getDotNetMessage: ActionOption | Command = {
+            title: vscode.l10n.t('Get the SDK'),
+            action: async () => {
+                await vscode.env.openExternal(vscode.Uri.parse('https://dot.net/core-sdk-vscode'));
+            },
+        };
         const goToSettingsMessage: ActionOption = {
             title: vscode.l10n.t('Disable message in settings'),
             action: async () => {
@@ -316,25 +310,14 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // debugger has finished installation, kick off our debugger process
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
-        if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
-            const targetArchitecture = getTargetArchitecture(
-                this.platformInfo,
-                _session.configuration.targetArchitecture,
-                dotNetInfo
-            );
-            const command = path.join(
-                common.getExtensionPath(),
-                '.debugger',
-                targetArchitecture,
-                'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
-            );
-
+        const pipeTransport = _session.configuration.pipeTransport;
+        if (!executable || typeof pipeTransport === 'object') {
             // Look to see if DOTNET_ROOT is set, then use dotnet cli path
+            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
             const dotnetRoot: string =
                 process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
 
-            let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
+            let options: vscode.DebugAdapterExecutableOptions = {};
             if (dotnetRoot) {
                 options = {
                     env: {
@@ -343,7 +326,44 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 };
             }
 
-            executable = new vscode.DebugAdapterExecutable(command, [], options);
+            let command = '';
+            let args = [];
+            if (typeof pipeTransport === 'object') {
+                if (pipeTransport.debuggerPath) {
+                    command = pipeTransport.debuggerPath;
+                } else {
+                    command = path.join(
+                        common.getExtensionPath(),
+                        '.debugger',
+                        'netcoredbg',
+                        'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()
+                    );
+                }
+                if (pipeTransport.debuggerArgs) {
+                    args = pipeTransport.debuggerArgs;
+                } else {
+                    args.push('--interpreter=vscode', '--');
+                }
+                if (pipeTransport.pipeProgram) {
+                    args.push(pipeTransport.pipeProgram);
+                }
+                if (pipeTransport.pipeArgs) {
+                    args.push(...pipeTransport.pipeArgs);
+                }
+                if (pipeTransport.pipeCwd) {
+                    options.cwd = pipeTransport.pipeCwd;
+                }
+            } else {
+                command = path.join(
+                    common.getExtensionPath(),
+                    '.debugger',
+                    'netcoredbg',
+                    'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()
+                );
+                args = ['--interpreter=vscode'];
+            }
+
+            executable = new vscode.DebugAdapterExecutable(command, args, options);
         }
 
         // make VS Code launch the DA executable

@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "42.42.42-placeholder",
+  "version": "0.0.0-placeholder",
   "description": "Base language support for C#",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -122,6 +122,7 @@
     "ps-list": "7.2.0",
     "rxjs": "6.6.7",
     "semver": "7.5.4",
+    "tar": "^7.5.19",
     "vscode-html-languageservice": "^5.3.1",
     "vscode-languageclient": "10.0.0-next.20",
     "yauzl": "3.2.1"
@@ -417,37 +418,21 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-win7-x64.zip",
-      "installPath": ".debugger/x86_64",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/3.2.0-1092/netcoredbg-win64.zip",
+      "installPath": ".debugger",
       "platforms": [
         "win32"
       ],
       "architectures": [
-        "x86_64",
-        "arm64"
+        "x86_64"
       ],
-      "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "5E3167514EC72B2B08F055C0CB853A7187B86FD5D29CA5623C1FB17178153381"
-    },
-    {
-      "id": "Debugger",
-      "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-win10-arm64.zip",
-      "installPath": ".debugger/arm64",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "344AA103DCF6F9A8818C327E0399BB5E3B2C44586D7903A0FAA39E463287CD5C"
+      "installTestPath": ".debugger/netcoredbg/netcoredbg.exe"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-osx-x64.zip",
-      "installPath": ".debugger/x86_64",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/3.2.0-1092/netcoredbg-osx-arm64.zip",
+      "installPath": ".debugger",
       "platforms": [
         "darwin"
       ],
@@ -456,52 +441,14 @@
         "arm64"
       ],
       "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
+        "./netcoredbg"
       ],
-      "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "AC8C270FA89934E024C8DEEFE342830585E5B53EEC8433517B5D8FB751044A10"
-    },
-    {
-      "id": "Debugger",
-      "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-osx-arm64.zip",
-      "installPath": ".debugger/arm64",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
-      ],
-      "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "5697A1269C7B51BC1E0EFF9478C6835643F16A3292582AD68ADA4D22836F888E"
-    },
-    {
-      "id": "Debugger",
-      "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-arm.zip",
-      "installPath": ".debugger",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm"
-      ],
-      "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
-      ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B6A27A559866CC3EC4B8D470E880DC0A38B1AAED25CF28750C775B05F0635136"
+      "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-arm64.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/3.2.0-1092/netcoredbg-linux-arm64.tar.gz",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -510,65 +457,26 @@
         "arm64"
       ],
       "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
+        "./netcoredbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "4A98E3798B9D78C44446EA2A54C35233ED2A98C0CDE792D1DAD21B6034121B28"
-    },
-    {
-      "id": "Debugger",
-      "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-musl-x64.zip",
-      "installPath": ".debugger",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
-      ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "F72445BB3931C299A0FC6A7D435B03F6C25625B1BB1D9DDEE7AA5D0F0D6CEB19"
-    },
-    {
-      "id": "Debugger",
-      "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-musl-arm64.zip",
-      "installPath": ".debugger",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
-      ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "A4E94F188488CBB1AAAD0CFB087300CABC17285620A582A3A6B01C0A8AAE258E"
+      "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-x64.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/3.2.0-1092/netcoredbg-linux-amd64.tar.gz",
       "installPath": ".debugger",
       "platforms": [
-        "linux"
+        "linux",
+        "linux-musl"
       ],
       "architectures": [
         "x86_64"
       ],
       "binaries": [
-        "./vsdbg-ui",
-        "./vsdbg"
+        "./netcoredbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "A4C93FB850211AE2138FD8FD1DACDBD2571D65D258A357135740F619DA14E08D"
+      "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
       "id": "RazorOmnisharp",

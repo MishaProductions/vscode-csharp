@@ -6,6 +6,7 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as nbgv from 'nerdbank-gitversioning';
+import * as fsextra from 'fs-extra';
 import { Logger } from '../../src/logger';
 import { PlatformInformation } from '../../src/shared/platform';
 import { CsharpLoggerObserver } from '../../src/shared/observers/csharpLoggerObserver';
@@ -342,10 +343,6 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
 
 async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, options: VsixReleasePackageOptions) {
     await cleanAsync();
-    // Set the package.json version based on the value in version.json.
-    const versionInfo = await nbgv.getVersion();
-    console.log(versionInfo.npmPackageVersion);
-    await nbgv.setPackageVersion();
 
     if (options.prerelease) {
         console.log('Packaging prerelease version.');
@@ -378,7 +375,6 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, opti
         });
     } finally {
         // Reset package version to the placeholder value.
-        await nbgv.resetPackageVersionPlaceholder();
     }
 }
 
